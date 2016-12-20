@@ -1,0 +1,56 @@
+---
+- hosts: DOCKER-SERV
+  remote_user: root
+
+# Use mkpasswd --method=sha-512 to generate your password and copy paste this one after password_myuser: 
+  vars:
+    password_myuser: 
+    
+  tasks:
+  - name: APT-GET UPDATE
+    apt: update_cache=yes cache_valid_time=7200 upgrade=dist
+
+  - name: Installation Tools
+    apt: name={{item}} state=present
+    with_items:
+      - htop
+      - vim
+      - ufw
+      - rkhunter
+      - fail2ban
+      - mutt
+      - logwatch
+      - logrotate
+      - portsentry
+      - sudo
+	  - apt-transport-https
+      - ca-certificates 
+	  - gnupg2
+
+  - name: User Account Creation
+    user: name=MyUSER comment=MyUser shell=/bin/bash createhome=yes groups=sudo
+    
+  - name: Change Password Account
+    user: name=MyUser password={{password_myuser}} state=present
+
+  - apt_key:
+      keyserver: hkp://ha.pool.sks-keyservers.net:80
+      id: 58118E89F3A912897C070ADBF76221572C52609D
+	  
+  - file:
+      path: /etc/apt/sources.list.d/docker.list
+      state: touch
+      mode: 0755
+
+  - lineinfile:
+      dest: /etc/apt/sources.list.d/docker.list
+      line: 'deb https://apt.dockerproject.org/repo debian-jessie main'
+	  
+  - name: Install docker-engine
+    apt: 
+	  name: docker-engine
+	  update_cache=yes
+
+  - service:
+      name: docker
+      state: started
