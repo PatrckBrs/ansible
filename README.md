@@ -1,2 +1,2 @@
 # ansible
-Depot de playbook.xml
+Depot de playbook.yml
