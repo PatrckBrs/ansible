@@ -23,9 +23,9 @@
       - logrotate
       - portsentry
       - sudo
-	  - apt-transport-https
+      - apt-transport-https
       - ca-certificates 
-	  - gnupg2
+      - gnupg2
 
   - name: User Account Creation
     user: name=MyUSER comment=MyUser shell=/bin/bash createhome=yes groups=sudo
